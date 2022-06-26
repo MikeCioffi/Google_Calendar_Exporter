@@ -147,12 +147,12 @@ console.log('end date is now' + endDate)
 
     
   
-   <p> Start Date <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} />
+   <p> Start Date <DatePicker className = 'date-picker' selected={startDate} onChange={(date) => setStartDate(date)} />
        
    </p>
    
     <p> End Date
-    <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} />
+    <DatePicker  portalId="root" className = 'date-picker' selected={endDate} onChange={(date) => setEndDate(date)} />
     </p>
 
     <button className ='btn'
