@@ -2,7 +2,7 @@ import {useState, useEffect } from 'react';
 import ApiCalendar from 'react-google-calendar-api';
 import "./Calendar.css"
 import { CSVLink } from "react-csv";
-
+import { Table } from 'react-bootstrap';
 // state management
 
 
@@ -51,6 +51,8 @@ const headers = [
     });
     }
 
+
+
     else if (name === 'download-data'){
       
     }
@@ -85,7 +87,7 @@ const headers = [
     }
     else{
       if(isNaN(result)){
-        return "unable to compute duration of meeting in minutes" 
+        return "" 
       } 
     }
      }
@@ -120,12 +122,47 @@ const headers = [
         {csvData.length > 1 ?     <CSVLink data={csvData} headers={headers} className ='btn'>
           Download Data
         </CSVLink>: <></>}
-    <ul className ='data-container'>
-    {data.length > 1 ? data.map((item, index) => <li className ='data-row' key={item.id} ><div className='under-line'>{index+1}</div><div>{clientParser(item.summary)} </div><div>Title: {item.summary}</div> <div> Duration:  {dateConverter(item.start.dateTime,item.end.dateTime)} mins</div><div>Date: {getDay(item.start.dateTime)}</div> </li>): <></>}
-    </ul>
+       { data.length > 1 ?
+    <Table responsive striped bordered >
+    <thead>
+    <tr>
+      <th>#</th>
+      <th>Client</th>
+      <th>Title</th>
+      <th>Duration (mins)</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody>
+{/*     <tr>
+      <td>1</td>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr>
+     */}
+    {data.length > 1 ? data.map((item, index) => 
+    <tr key={item.id} >
+      <td>{index+1}</td>
+    <td>{clientParser(item.summary)}</td>
+      <td> {item.summary}</td>
+      <td> 
+        {dateConverter(item.start.dateTime,item.end.dateTime)} 
+      </td>
+      <td>
+        {getDay(item.start.dateTime)}
+      </td>
+      </tr>): <></>}
+      </tbody>
+
+
+      </Table>
+      : <></>}
+
   </>
     );
 
 }
 
 export default Calendar
+
