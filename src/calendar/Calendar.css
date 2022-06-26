@@ -38,6 +38,12 @@
     margin: 15px auto; 
     margin-bottom: 15px; ;
 }
+.table-container{
+    display: flex; 
+    justify-content: center;
+    width: 75%; 
+    margin: 0 auto; 
+}
 @media only screen and (max-width: 640px){
     .data-row{
         width: 90%; 

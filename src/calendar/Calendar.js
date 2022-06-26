@@ -32,12 +32,13 @@ const headers = [
   }
   
   const apiCalendar = new ApiCalendar(config)
+
+  console.log(apiCalendar)
   
   const  handleItemClick = (event, name) => {
     if (name === 'sign-in') {
       console.log('trying to sign in')
     apiCalendar.handleAuthClick(); 
-    console.log(apiCalendar.handleAuthClick())
     } else if (name === 'sign-out') {
       apiCalendar.handleSignoutClick();
     }
@@ -47,11 +48,10 @@ const headers = [
         maxResults: 10000,
         orderBy: 'updated'
     }).then(({ result }) => {
+      
      setData(result.items)
     });
     }
-
-
 
     else if (name === 'download-data'){
       
@@ -104,7 +104,6 @@ const headers = [
      }
 
   
-  console.log(csvData)
   
   return (<>
   <button className ='btn'
@@ -122,8 +121,8 @@ const headers = [
         {csvData.length > 1 ?     <CSVLink data={csvData} headers={headers} className ='btn'>
           Download Data
         </CSVLink>: <></>}
-       { data.length > 1 ?
-    <Table responsive striped bordered >
+       { data.length > 1 ?<div className='table-container'>
+    <Table responsive striped bordered className='customtable' >
     <thead>
     <tr>
       <th>#</th>
@@ -134,13 +133,6 @@ const headers = [
     </tr>
   </thead>
   <tbody>
-{/*     <tr>
-      <td>1</td>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-     */}
     {data.length > 1 ? data.map((item, index) => 
     <tr key={item.id} >
       <td>{index+1}</td>
@@ -157,6 +149,7 @@ const headers = [
 
 
       </Table>
+      </div>
       : <></>}
 
   </>
