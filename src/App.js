@@ -1,5 +1,5 @@
 import './App.css';
-import Calendar from './calendar/Calendar';
+import Calendar from './Calendar/Calendar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 
