@@ -156,21 +156,17 @@ const headers = [
   
   
   return (<>
-  <button className ='login-with-google-btn'
-    onClick={(e) => handleItemClick(e, 'sign-in')}
-  >
-    Sign in with Google
-</button>
+  <div> 
+    <h3>Authenticate with Google to allow access to your calendar</h3> 
 
-    
-{/*   
-   <p> Start Date <DatePicker className = 'date-picker' selected={startDate} onChange={(date) => setStartDate(date)} />
-       
-   </p>
-   
-    <p> End Date
-    <DatePicker  portalId="root" className = 'date-picker' selected={endDate} onChange={(date) => setEndDate(date)} />
-    </p> */}
+    <button className ='login-with-google-btn'
+    onClick={(e) => handleItemClick(e, 'sign-in')}>
+    Sign in with Google
+  </button>
+  </div>
+  <div> 
+    <h3>Enter the day range and generate report</h3> 
+
     <DatePicker
       value={selectedDayRange}
       onChange={setSelectedDayRange}
@@ -178,15 +174,17 @@ const headers = [
       inputClassName='datepicker_input'
       
     />
-
+  <br></br>
     <button className ='btn'
     onClick={(e) => handleItemClick(e, 'load-data')}
   >
     Generate Report
     </button> 
-        {csvData.length > 1 ?     <CSVLink data={csvData} headers={headers} className ='btn'>
+    {csvData.length > 1 ?     <CSVLink data={csvData} headers={headers} className ='btn'>
           Download Data
         </CSVLink>: <></>}
+    </div> 
+    
        { data.length > 1 ?<div className='table-container'>
     <Table responsive striped bordered className='customtable' >
     <thead>
