@@ -10,7 +10,7 @@
 <img src="google_cal_export_1.gif"/>
 
 # ⭐ How to use
-- Need to get your own client ID and API key from google api. Learn more at [https://developers.google.com/calendar/api/quickstart/js] (googles developer site). 
+- Need to get your own client ID and API key from google api. Learn more at https://developers.google.com/calendar/api/quickstart/js
 - Create a .env file and enter client / api key
 - Run npm install 
 - Run npm start 
