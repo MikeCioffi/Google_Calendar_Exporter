@@ -7,7 +7,7 @@
 
 <br />
 
-<img src="google_cal_export_1"/>
+<img src="google_cal_export_1.gif"/>
 
 # ⭐ How to use
 
