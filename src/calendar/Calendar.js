@@ -3,23 +3,29 @@ import ApiCalendar from 'react-google-calendar-api';
 import "./Calendar.css"
 import { CSVLink } from "react-csv";
 import { Table } from 'react-bootstrap';
-import DatePicker from "react-datepicker";
+// import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Colors from "./colors.json"
 
+import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
+import DatePicker from '@hassanmojab/react-modern-calendar-datepicker';
+
+
+const CalendarComponent = () => {
 // state management
-console.log(Colors.calendar[7].background)
-const Calendar = () => {
   const [data, setData ] = useState({})
   const [csvData, setCSVData] = useState([])
   const moment = require('moment');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
+  const [selectedDayRange, setSelectedDayRange] = useState({
+    from: null,
+    to: null
+  });
 
-  console.log("new date = " + startDate.toISOString())
-console.log(startDate)
-  
+
+
 const headers = [
   { label: "Client", key: "client" },
   { label: "Meeting Title", key: "title" },
@@ -41,7 +47,7 @@ const headers = [
   
   const apiCalendar = new ApiCalendar(config)
 
-  console.log(apiCalendar)
+
   
   const  handleItemClick = (event, name) => {
     if (name === 'sign-in') {
@@ -58,7 +64,7 @@ const headers = [
         maxResults: 10000,
         orderBy: 'updated'
     }).then(({ result }) => {
-      console.log(result)
+      console.log(result.items)
      setData(result.items)
     });
     }
@@ -67,6 +73,19 @@ const headers = [
       
     }
   }
+
+  console.log(startDate.toISOString())
+  useEffect(()=>{
+
+    if(selectedDayRange.to != null ){
+      setEndDate(new Date(selectedDayRange.to.year, selectedDayRange.to.month-1, selectedDayRange.to.day))
+      setStartDate(new Date(selectedDayRange.from.year, selectedDayRange.from.month-1, selectedDayRange.from.day))
+
+    }
+
+
+
+  },[selectedDayRange])
 
   useEffect(()=> {
 
@@ -77,8 +96,6 @@ const headers = [
   }
  },[data])
 
-console.log('start date is now' + startDate)
-console.log('end date is now' + endDate)
 
   const getDay = (dateFormat) =>{
     const newDateFormat = new Date(dateFormat); 
@@ -139,21 +156,27 @@ console.log('end date is now' + endDate)
   
   
   return (<>
-  <button className ='btn'
+  <button className ='login-with-google-btn'
     onClick={(e) => handleItemClick(e, 'sign-in')}
   >
-    Connect Google Calendar
+    Sign in with Google
 </button>
 
     
-  
+{/*   
    <p> Start Date <DatePicker className = 'date-picker' selected={startDate} onChange={(date) => setStartDate(date)} />
        
    </p>
    
     <p> End Date
     <DatePicker  portalId="root" className = 'date-picker' selected={endDate} onChange={(date) => setEndDate(date)} />
-    </p>
+    </p> */}
+    <DatePicker
+      value={selectedDayRange}
+      onChange={setSelectedDayRange}
+      inputPlaceholder="Select a day range"
+      
+    />
 
     <button className ='btn'
     onClick={(e) => handleItemClick(e, 'load-data')}
@@ -207,5 +230,5 @@ console.log('end date is now' + endDate)
 
 }
 
-export default Calendar
+export default CalendarComponent
 
