@@ -6,6 +6,8 @@ import { Table } from 'react-bootstrap';
 // import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Colors from "./colors.json"
+import Dates from "../Helpers/Dates"
+import Helper from "../Helpers/Helpers"
 
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 import DatePicker from '@hassanmojab/react-modern-calendar-datepicker';
@@ -15,7 +17,6 @@ const CalendarComponent = () => {
 // state management
   const [data, setData ] = useState({})
   const [csvData, setCSVData] = useState([])
-  const moment = require('moment');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
@@ -23,8 +24,6 @@ const CalendarComponent = () => {
     from: null,
     to: null
   });
-
-
 
 const headers = [
   { label: "Client", key: "client" },
@@ -34,11 +33,9 @@ const headers = [
   { label: "Date", key: "date" }
 
 ];
-
-
   const config = {
-    "clientId": "415504819855-715tr1irgfkjrtte6cp4j55lnecf47jg.apps.googleusercontent.com",
-    "apiKey": "AIzaSyCxuZGsu7i8Y7VFi7N4axjfDaQP8mYfma4",
+    "clientId": process.env.REACT_APP_CLIENT_ID,
+    "apiKey":process.env.REACT_APP_API_KEY,
     "scope": "https://www.googleapis.com/auth/calendar",
     "discoveryDocs": [
       "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"
@@ -46,7 +43,6 @@ const headers = [
   }
   
   const apiCalendar = new ApiCalendar(config)
-
 
   
   const  handleItemClick = (event, name) => {
@@ -74,91 +70,26 @@ const headers = [
     }
   }
 
-  console.log(startDate.toISOString())
   useEffect(()=>{
-
     if(selectedDayRange.to != null ){
       setEndDate(new Date(selectedDayRange.to.year, selectedDayRange.to.month-1, selectedDayRange.to.day))
       setStartDate(new Date(selectedDayRange.from.year, selectedDayRange.from.month-1, selectedDayRange.from.day))
-
     }
-
-
-
   },[selectedDayRange])
 
   useEffect(()=> {
 
     if(data.length > 1 ){
       data.map((item)=> 
-        setCSVData(csvData => [...csvData, {client: clientParser(item.summary), title: item.summary, duration: dateConverterMinutes(item.start.dateTime,item.end.dateTime) , date: getDay(item.start.dateTime)}])
+        setCSVData(csvData => [...csvData, {client: Helper.clientParser(item.summary), title: item.summary, duration: Dates.dateConverterMinutes(item.start.dateTime,item.end.dateTime) , date: Dates.getDay(item.start.dateTime)}])
       ) 
   }
  },[data])
+ 
 
-
-  const getDay = (dateFormat) =>{
-    const newDateFormat = new Date(dateFormat); 
-    return newDateFormat.toDateString();
-  }
-
-  
-  const dateConverterMinutes = (startDate, timeEnd) => {
-    const newStartDate= new Date(startDate);
-    const newEndDate=new Date(timeEnd);
-    let minuteResult=moment(newStartDate).diff(newEndDate,'minutes')
-
-    if(minuteResult < 0){
-      return minuteResult *-1
-    }
-    if(minuteResult > 0 ){
-      return minuteResult
-
-    }
-    else{
-      if(isNaN(minuteResult)){
-        return "" 
-      } 
-    }
-     }
-
-
-     const dateConverterHour = (startDate, timeEnd) => {
-      const newStartDate= new Date(startDate);
-      const newEndDate=new Date(timeEnd);
-      let hourResult=moment(newStartDate).diff(newEndDate,'hours',true) *2
-      hourResult = Math.floor(hourResult) /2
-      if(hourResult < 0){
-        return hourResult *-1
-      }
-      if(hourResult > 0 ){
-        return  hourResult
-  
-      }
-      else{
-        if(isNaN( hourResult)){
-          return "" 
-        } 
-      }
-       }
-
-     const clientParser = (client) => {
-      if(typeof client === 'string'){
-      if (client.includes("-")){
-        return client.substring(0, client.indexOf('-')); 
-      }
-      }
-        
-      return 
-      
-     }
-
-  
-  
   return (<>
   <div> 
     <h3>Authenticate with Google to allow access to your calendar</h3> 
-
     <button className ='login-with-google-btn'
     onClick={(e) => handleItemClick(e, 'sign-in')}>
     Sign in with Google
@@ -166,7 +97,6 @@ const headers = [
   </div>
   <div> 
     <h3>Enter the day range and generate report</h3> 
-
     <DatePicker
       value={selectedDayRange}
       onChange={setSelectedDayRange}
@@ -202,32 +132,27 @@ const headers = [
     {data.length > 1 ? data.map((item, index) => 
     <tr key={item.id} >
       <td>{index+1}</td>
-    <td>{clientParser(item.summary)}</td>
+    <td>{Helper.clientParser(item.summary)}</td>
       <td> {item.summary}</td>
       <td> 
-        {dateConverterMinutes(item.start.dateTime,item.end.dateTime)} 
+        {Dates.dateConverterMinutes(item.start.dateTime,item.end.dateTime)} 
       </td>
       <td> 
-        {dateConverterHour(item.start.dateTime,item.end.dateTime)} 
+        {Dates.dateConverterHour(item.start.dateTime,item.end.dateTime)} 
       </td>
       <td>
         {typeof item.colorId != "undefined" ? <div style={{backgroundColor:Colors.event[item.colorId].background}} >{Colors.event[item.colorId].name}</div> : <></>}
       </td>
       <td>
-        {getDay(item.start.dateTime)}
+        {Dates.getDay(item.start.dateTime)}
       </td>
       </tr>): <></>}
       </tbody>
-
-
       </Table>
       </div>
       : <></>}
-
   </>
     );
-
 }
-
 export default CalendarComponent
 
