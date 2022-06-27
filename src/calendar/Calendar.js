@@ -175,13 +175,14 @@ const headers = [
       value={selectedDayRange}
       onChange={setSelectedDayRange}
       inputPlaceholder="Select a day range"
+      inputClassName='datepicker_input'
       
     />
 
     <button className ='btn'
     onClick={(e) => handleItemClick(e, 'load-data')}
   >
-    View Data
+    Generate Report
     </button> 
         {csvData.length > 1 ?     <CSVLink data={csvData} headers={headers} className ='btn'>
           Download Data
