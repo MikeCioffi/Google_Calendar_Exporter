@@ -98,6 +98,7 @@ const CalendarComponent = () => {
       onChange={setSelectedDayRange}
       inputPlaceholder="Select a day range"
       inputClassName='datepicker_input'
+      maximum-scale = "1"
       
     />
   <br></br>
