@@ -11,6 +11,7 @@ import Exportdata from "../CSV/Exportdata"
 import '@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css';
 import DatePicker from '@hassanmojab/react-modern-calendar-datepicker';
 import ResultTable from '../Calendar/ResultTable';
+import { Gapi } from '../APIs/gapi';
 
 
 const CalendarComponent = () => {
@@ -37,13 +38,8 @@ const CalendarComponent = () => {
   const apiCalendar = new ApiCalendar(config)
 
   const  handleItemClick = (event, name) => {
-    if (name === 'sign-in') {
-      console.log('trying to sign in')
-    apiCalendar.handleAuthClick(); 
-    } else if (name === 'sign-out') {
-      apiCalendar.handleSignoutClick();
-    }
-    else if (name === 'load-data'){
+
+     if (name === 'load-data'){
       apiCalendar.listEvents({
         timeMin: startDate.toISOString(), 
         timeMax: endDate.toISOString(), 
@@ -86,10 +82,7 @@ const CalendarComponent = () => {
   return (<>
   <div> 
     <h3>Authenticate with Google to allow access to your calendar</h3> 
-    <button className ='login-with-google-btn'
-    onClick={(e) => handleItemClick(e, 'sign-in')}>
-    Sign in with Google
-  </button>
+    <Gapi/>
   </div>
   
     <h3>Enter the day range and generate report</h3> 
