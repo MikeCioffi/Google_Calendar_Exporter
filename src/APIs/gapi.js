@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect } from 'react';
 import { gapi, loadAuth2 } from 'gapi-script'
 
 import './gapi.css';
 
-export const Gapi  = () => {
-  const [user, setUser] = useState(null);
+export const Gapi  = (props) => {
 
   useEffect(() => {
+    
     const setAuth2 = async () => {
-      const auth2 = await loadAuth2(gapi, process.env.REACT_APP_CLIENT_ID, '')
+        console.log("setAuth2 ran")
+      const auth2 = await loadAuth2(gapi, process.env.REACT_APP_CLIENT_ID, 'https://www.googleapis.com/auth/calendar')
       if (auth2.isSignedIn.get()) {
           updateUser(auth2.currentUser.get())
       } else {
@@ -16,26 +17,28 @@ export const Gapi  = () => {
       }
     }
     setAuth2();
+        
   }, []);
 
   useEffect(() => {
-    if (!user) {
+    if (props.user != null) {
+        console.log(props.user)
       const setAuth2 = async () => {
-        const auth2 = await loadAuth2(gapi, process.env.REACT_APP_CLIENT_ID, '')
+        const auth2 = await loadAuth2(gapi, process.env.REACT_APP_CLIENT_ID, 'https://www.googleapis.com/auth/calendar')
         attachSignin(document.getElementById('customBtn'), auth2);
       }
       setAuth2();
     }
-  }, [user])
+  }, [props.user])
 
   const updateUser = (currentUser) => {
     const name = currentUser.getBasicProfile().getName();
     const profileImg = currentUser.getBasicProfile().getImageUrl();
-    setUser({
+    props.setUser({
       name: name,
       profileImg: profileImg,
-    });
-  };
+    })};
+  ;
 
   const attachSignin = (element, auth2) => {
     auth2.attachClickHandler(element, {},
@@ -49,22 +52,22 @@ export const Gapi  = () => {
   const signOut = () => {
     const auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(() => {
-      setUser(null);
+      props.setUser(null);
       console.log('User signed out.');
     });
   }
 
-  if(user) {
+  if(props.user) {
     return (
-        <button id="" className="btn logout" onClick={signOut}>
-                <img src={user.profileImg} alt="user profile" />
-        Logout {user.name}
+        <button id="customBtn" className="login-with-google-btn " onClick={signOut}>
+          <span className='logout-tag'>Logout</span> 
+          <img height='50 px' width = '50px'  align='left' src={props.user.profileImg} alt="user profile" />
         </button>
     );
   }
 
   return (
-      <button id="customBtn" className="login-with-google-btn">
+      <button id="customBtn" className="login-with-google-btn googlepic">
         Sign in with Google
     </button>
   );

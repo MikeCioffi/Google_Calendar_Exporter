@@ -20,6 +20,8 @@ const CalendarComponent = () => {
   const [csvData, setCSVData] = useState([])
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [user, setUser] = useState(null);
+
 
   const [selectedDayRange, setSelectedDayRange] = useState({
     from: null,
@@ -78,20 +80,20 @@ const CalendarComponent = () => {
   }
  },[data])
  
-
+console.log(data)
   return (<>
   <div> 
-    <h3>Authenticate with Google to allow access to your calendar</h3> 
-    <Gapi/>
+    {user != null ?  <h3> Welcome {user.name}</h3> : <h3>Authenticate with Google to allow access to your calendar</h3> }
+    <Gapi user = {user} setUser = {setUser}/>
   </div>
-  
+    {user != null ? <div>
     <h3>Enter the day range and generate report</h3> 
     <DatePicker
       value={selectedDayRange}
       onChange={setSelectedDayRange}
       inputPlaceholder="Select a day range"
       inputClassName='datepicker_input'
-      maximum-scale = "1"
+
       
     />
   <br></br>
@@ -103,7 +105,10 @@ const CalendarComponent = () => {
     {csvData.length > 1 ?     <CSVLink data={csvData} headers={Exportdata.headers} className ='btn'>
           Download Data
         </CSVLink>: <></>}
-    <ResultTable data = {data}/>
+    <ResultTable data = {data} />
+    </div>:
+    <></>
+    }
   </>
     );
 }
