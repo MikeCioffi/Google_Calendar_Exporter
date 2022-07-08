@@ -1,29 +1,16 @@
-import React, {useEffect } from 'react';
+import React, {useState, useEffect } from 'react';
 import { gapi, loadAuth2 } from 'gapi-script'
 
 import './gapi.css';
 
 export const Gapi  = (props) => {
+  const [loggedIn, setLoggedIn] = useState(false)
 
   useEffect(() => {
-    
-    const setAuth2 = async () => {
-        console.log("setAuth2 ran")
-      const auth2 = await loadAuth2(gapi, process.env.REACT_APP_CLIENT_ID, 'https://www.googleapis.com/auth/calendar')
-      if (auth2.isSignedIn.get()) {
-          updateUser(auth2.currentUser.get())
-      } else {
-          attachSignin(document.getElementById('customBtn'), auth2);
-      }
-    }
-    setAuth2();
-        
-  }, []);
-
-  useEffect(() => {
-    if (props.user != null) {
+    console.log(props.user)
+    if (!props.user) {
         console.log(props.user)
-      const setAuth2 = async () => {
+        const setAuth2 = async () => {
         const auth2 = await loadAuth2(gapi, process.env.REACT_APP_CLIENT_ID, 'https://www.googleapis.com/auth/calendar')
         attachSignin(document.getElementById('customBtn'), auth2);
       }
@@ -44,16 +31,18 @@ export const Gapi  = (props) => {
     auth2.attachClickHandler(element, {},
       (googleUser) => {
         updateUser(googleUser);
+        setLoggedIn(true)
       }, (error) => {
       console.log(JSON.stringify(error))
     });
   };
 
   const signOut = () => {
-    const auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(() => {
+      const auth2 = gapi.auth2.getAuthInstance();
+      auth2.signOut().then(() => {
       props.setUser(null);
       console.log('User signed out.');
+      gapi.auth2.getAuthInstance().disconnect()
     });
   }
 

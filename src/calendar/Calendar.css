@@ -107,7 +107,10 @@
 
 
     }
-  
+    #spinner{
+        display: flex; 
+        justify-content: center; 
+    }
   
   
   
