@@ -40,51 +40,59 @@ const CalendarComponent = () => {
 	const [touched, setTouched] = useState(false)
 	const [colorData, setColorData] = useState([
 		{
+			key: "1",
 			background: "#039be5",
 			name: "Marketing",
 		},
 		{
+			key: "2",
 			background: "#7986cb",
 			name: "Finance",
 		},
 		{
+			key: "3",
 			background: "#33b679",
 			name: "R&D",
 		},
 		{
+			key: "4",
 			background: "#e67c73",
 			name: "Sales",
 		},
 		{
+			key: "5",
 			background: "#f6c026",
 			name: "Operations",
 		},
 		{
+			key: "6",
 			background: "#f5511d",
 			name: "Management",
 		},
 		{
+			key: "7",
 			background: "#039be5",
 			name: "Customer Service",
 		},
 		{
+			key: "8",
 			background: "#616161",
 			name: "Human Resources",
 		},
 		{
+			key: "9",
 			background: "#3f51b5",
 			name: "Technical Support",
 		},
 		{
+			key: "10",
 			background: "#0b8043",
 			name: "Legal",
 		},
 		{
+			key: "11",
 			background: "#d60000",
 			name: "Supply Chain",
-		},
-		{
-			background: "",
 		},
 	])
 
@@ -129,7 +137,6 @@ const CalendarComponent = () => {
 						colorId: item.colorId ? item.colorId : null,
 					})
 				})
-				console.log(tempData)
 				tempData.sort(
 					(d1, d2) =>
 						new Date(d1.startDate).getTime() - new Date(d2.startDate).getTime()
@@ -174,7 +181,6 @@ const CalendarComponent = () => {
 		let tempData = []
 		if (data.length > 1) {
 			data.map((item) => {
-				console.log(item)
 				tempData.push({
 					client: Helper.clientParser(item.summary),
 					title: item.summary,
