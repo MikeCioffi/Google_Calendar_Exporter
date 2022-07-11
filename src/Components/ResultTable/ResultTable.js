@@ -6,7 +6,7 @@ const ResultTable = (props) => {
 	return (
 		<div>
 			{props.data.length >= 1 ? (
-				<div className='table-container'>
+				<div className='table-container animate'>
 					<Table responsive striped bordered className='customtable'>
 						<thead>
 							<tr>
@@ -20,28 +20,22 @@ const ResultTable = (props) => {
 							</tr>
 						</thead>
 						<tbody>
-							{props.data.length >= 1 ? (
+							{props.data[0].id !== null ? (
 								props.data.map((item, index) => (
 									<tr key={item.id}>
 										<td className='align-middle'>{index + 1}</td>
 										<td className='align-middle'>
-											{Helper.clientParser(item.summary)}
+											{Helper.clientParser(item.title)}
 										</td>
-										<td className='align-middle'>{item.summary}</td>
+										<td className='align-middle'>{item.title}</td>
 										<td className='align-middle'>
-											{Dates.dateConverterMinutes(
-												item.start.dateTime,
-												item.end.dateTime
-											)}
+											{Dates.dateConverterMinutes(item.startDate, item.endDate)}
 										</td>
 										<td className='align-middle'>
-											{Dates.dateConverterHour(
-												item.start.dateTime,
-												item.end.dateTime
-											)}
+											{Dates.dateConverterHour(item.startDate, item.endDate)}
 										</td>
 										<td className='align-middle'>
-											{typeof item.colorId != "undefined" ? (
+											{item.colorId ? (
 												<div
 													style={{
 														backgroundColor:
@@ -57,9 +51,14 @@ const ResultTable = (props) => {
 												<></>
 											)}
 										</td>
-										<td className='align-middle'>
-											{Dates.getDay(item.start.dateTime)}
-										</td>
+
+										{item.startDate !== undefined ? (
+											<td className='align-middle'>
+												{item.startDate.substring(0, 10)}
+											</td>
+										) : (
+											<td className='align-middle'></td>
+										)}
 									</tr>
 								))
 							) : (

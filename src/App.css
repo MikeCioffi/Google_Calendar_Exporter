@@ -37,3 +37,17 @@
     transform: rotate(360deg);
   }
 }
+
+
+.animate {
+  animation: slide-in 0.2s both;
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateY(1000px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}

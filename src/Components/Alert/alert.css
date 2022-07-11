@@ -1,0 +1,16 @@
+.alert{
+/* border:1px solid black;  */
+width: 50%; 
+margin: 0 auto; 
+display: flex; 
+justify-content: center; 
+align-items: center; 
+color: white; 
+}
+
+
+.error{
+    background-color: rgb(223, 125, 125) ;
+    box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
+
+}

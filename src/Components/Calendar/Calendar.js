@@ -18,18 +18,26 @@ import Colorlogo from "../../Imgs/color-circle.png"
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDownload } from "@fortawesome/free-solid-svg-icons"
+import Alert from "../Alert/Alert"
 
 const CalendarComponent = () => {
 	const current = new Date()
 
 	// state management
-	const [data, setData] = useState({})
+	// const [desiredData, setDesiredData] = useState({
+	// 	id: "item.id",
+	// 	title: "item.summary",
+	// 	startDate: "either item.start.date or item.start.dateTime.substring(0, 10)",
+	// 	endDate: "either item.end.date or item.end.dateTime.substring(0, 10)",
+	// 	colorId: "item.colorId",
+	// })
+	const [data, setData] = useState([])
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(null)
 	const [user, setUser] = useState(null)
 	const [loading, setLoading] = useState(false)
 	const [showColor, setShowColor] = useState(false)
-
+	const [touched, setTouched] = useState(false)
 	const [colorData, setColorData] = useState([
 		{
 			background: "#039be5",
@@ -75,6 +83,9 @@ const CalendarComponent = () => {
 			background: "#d60000",
 			name: "Supply Chain",
 		},
+		{
+			background: "",
+		},
 	])
 
 	const [selectedDayRange, setSelectedDayRange] = useState({
@@ -93,6 +104,8 @@ const CalendarComponent = () => {
 	const apiCalendar = new ApiCalendar(config)
 
 	function getData() {
+		setTouched(false)
+
 		console.log("getting data!")
 		apiCalendar
 			.listEvents({
@@ -103,8 +116,26 @@ const CalendarComponent = () => {
 				maxResults: 10000,
 			})
 			.then(({ result }) => {
-				console.log(result)
-				setData(result.items)
+				let tempData = []
+				console.log(result.items)
+				result.items.map((item) => {
+					tempData.push({
+						id: item.id,
+						title: item.summary,
+						startDate: item.start.dateTime
+							? item.start.dateTime
+							: item.start.date,
+						endDate: item.end.dateTime ? item.end.dateTime : item.end.date,
+						colorId: item.colorId ? item.colorId : null,
+					})
+				})
+				console.log(tempData)
+				tempData.sort(
+					(d1, d2) =>
+						new Date(d1.startDate).getTime() - new Date(d2.startDate).getTime()
+				)
+				setTouched(true)
+				setData(tempData)
 				setLoading(false)
 				setSelectedDayRange({
 					from: null,
@@ -146,19 +177,10 @@ const CalendarComponent = () => {
 				tempData.push({
 					client: Helper.clientParser(item.summary),
 					title: item.summary,
-					duration: Dates.dateConverterMinutes(
-						item.start.dateTime,
-						item.end.dateTime
-					),
-					hours: Dates.dateConverterHour(
-						item.start.dateTime,
-						item.end.dateTime
-					),
-					group:
-						typeof item.colorId != "undefined"
-							? colorData[item.colorId - 1].name
-							: "",
-					date: Dates.getDay(item.start.dateTime),
+					duration: Dates.dateConverterMinutes(item.startDate, item.endDate),
+					hours: Dates.dateConverterHour(item.startDate, item.endDate),
+					group: item.colorId != null ? colorData[item.colorId - 1].name : "",
+					date: Dates.getDay(item.startDate),
 				})
 			)
 		}
@@ -233,6 +255,14 @@ const CalendarComponent = () => {
 						<div>
 							<ResultTable data={data} colorData={colorData} />
 						</div>
+					)}
+					{touched && data.length === 0 ? (
+						<Alert
+							className='alert error'
+							alertTitle='No results found please select new dates and try again.'
+						/>
+					) : (
+						<></>
 					)}
 				</div>
 			) : (
