@@ -117,7 +117,7 @@ const CalendarComponent = () => {
 			})
 			.then(({ result }) => {
 				let tempData = []
-				console.log(result.items)
+
 				result.items.map((item) => {
 					tempData.push({
 						id: item.id,
@@ -173,16 +173,17 @@ const CalendarComponent = () => {
 	const generateDownloadData = () => {
 		let tempData = []
 		if (data.length > 1) {
-			data.map((item) =>
+			data.map((item) => {
+				console.log(item)
 				tempData.push({
 					client: Helper.clientParser(item.summary),
 					title: item.summary,
 					duration: Dates.dateConverterMinutes(item.startDate, item.endDate),
 					hours: Dates.dateConverterHour(item.startDate, item.endDate),
 					group: item.colorId != null ? colorData[item.colorId - 1].name : "",
-					date: Dates.getDay(item.startDate),
+					date: item.startDate.substring(0, 10),
 				})
-			)
+			})
 		}
 
 		return tempData.sort((objA, objB) => Number(objA.date) - Number(objB.date))
@@ -190,9 +191,9 @@ const CalendarComponent = () => {
 	return (
 		<>
 			{user != null ? (
-				<h3> Welcome {user.name}</h3>
+				<h1> Welcome {user.name}</h1>
 			) : (
-				<h3>Authenticate with Google to allow access to your calendar</h3>
+				<h1>Authenticate with Google to allow access to your calendar</h1>
 			)}
 			<Gapi user={user} setUser={setUser} />
 			{user != null ? (
