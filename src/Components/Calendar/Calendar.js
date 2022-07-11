@@ -3,23 +3,27 @@ import ApiCalendar from "react-google-calendar-api"
 import "./Calendar.css"
 import { CSVLink } from "react-csv"
 // import Colors from "./colors.json"
-import Colors from "../Components/Colors/Colors.js"
+import Colors from "../Colors/Colors.js"
 import "react-datepicker/dist/react-datepicker.css"
 import { TailSpin } from "react-loader-spinner"
 
-import Dates from "../Helpers/Dates"
-import Helper from "../Helpers/Helpers"
+import Dates from "../../Helpers/Dates"
+import Helper from "../../Helpers/Helpers"
 import Exportdata from "../CSV/Exportdata"
 import "@hassanmojab/react-modern-calendar-datepicker/lib/DatePicker.css"
 import DatePicker from "@hassanmojab/react-modern-calendar-datepicker"
-import ResultTable from "./ResultTable"
-import { Gapi } from "../APIs/gapi"
-import Colorlogo from "../Imgs/color-circle.png"
+import ResultTable from "../ResultTable/ResultTable"
+import { Gapi } from "../../APIs/gapi"
+import Colorlogo from "../../Imgs/color-circle.png"
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faDownload } from "@fortawesome/free-solid-svg-icons"
 
 const CalendarComponent = () => {
+	const current = new Date()
+
 	// state management
 	const [data, setData] = useState({})
-	const [csvData, setCSVData] = useState([])
 	const [startDate, setStartDate] = useState(new Date())
 	const [endDate, setEndDate] = useState(null)
 	const [user, setUser] = useState(null)
@@ -89,7 +93,6 @@ const CalendarComponent = () => {
 	const apiCalendar = new ApiCalendar(config)
 
 	function getData() {
-		setCSVData([])
 		console.log("getting data!")
 		apiCalendar
 			.listEvents({
@@ -103,6 +106,10 @@ const CalendarComponent = () => {
 				console.log(result)
 				setData(result.items)
 				setLoading(false)
+				setSelectedDayRange({
+					from: null,
+					to: null,
+				})
 			})
 	}
 
@@ -126,41 +133,38 @@ const CalendarComponent = () => {
 	}, [selectedDayRange])
 
 	useEffect(() => {
-		console.log("checking loading and it = " + JSON.stringify(loading))
 		if (endDate !== null) {
 			setLoading(true)
 			getData()
 		}
 	}, [endDate])
 
-	useEffect(() => {
+	const generateDownloadData = () => {
+		let tempData = []
 		if (data.length > 1) {
-			data.map((item) => {
-				console.log(item.colorId)
-				setCSVData((csvData) => [
-					...csvData,
-					{
-						client: Helper.clientParser(item.summary),
-						title: item.summary,
-						duration: Dates.dateConverterMinutes(
-							item.start.dateTime,
-							item.end.dateTime
-						),
-						hours: Dates.dateConverterHour(
-							item.start.dateTime,
-							item.end.dateTime
-						),
-						group:
-							typeof item.colorId != "undefined"
-								? colorData[item.colorId - 1].name
-								: "",
-						date: Dates.getDay(item.start.dateTime),
-					},
-				])
-			})
+			data.map((item) =>
+				tempData.push({
+					client: Helper.clientParser(item.summary),
+					title: item.summary,
+					duration: Dates.dateConverterMinutes(
+						item.start.dateTime,
+						item.end.dateTime
+					),
+					hours: Dates.dateConverterHour(
+						item.start.dateTime,
+						item.end.dateTime
+					),
+					group:
+						typeof item.colorId != "undefined"
+							? colorData[item.colorId - 1].name
+							: "",
+					date: Dates.getDay(item.start.dateTime),
+				})
+			)
 		}
-	}, [data, colorData])
 
+		return tempData.sort((objA, objB) => Number(objA.date) - Number(objB.date))
+	}
 	return (
 		<>
 			{user != null ? (
@@ -169,7 +173,6 @@ const CalendarComponent = () => {
 				<h3>Authenticate with Google to allow access to your calendar</h3>
 			)}
 			<Gapi user={user} setUser={setUser} />
-
 			{user != null ? (
 				<div>
 					<h3>Enter the day range and generate your report</h3>
@@ -179,12 +182,17 @@ const CalendarComponent = () => {
 						inputPlaceholder='Select a day range'
 						inputClassName='datepicker_input'
 					/>
-					<button
-						className='colorButton'
-						onClick={(e) => setShowColor(!showColor)}
-					>
-						<img src={Colorlogo} alt='color-button'></img>
-					</button>
+					{data.length > 1 ? (
+						<button
+							className='colorButton'
+							onClick={(e) => setShowColor(!showColor)}
+						>
+							<img src={Colorlogo} alt='color-button'></img>
+						</button>
+					) : (
+						<></>
+					)}
+
 					{showColor ? (
 						<Colors
 							colorData={colorData}
@@ -194,15 +202,26 @@ const CalendarComponent = () => {
 					) : (
 						<></>
 					)}
-					<br />
-					{csvData.length > 1 ? (
+
+					{data.length > 1 ? (
 						<CSVLink
-							data={csvData}
+							data={generateDownloadData()}
 							headers={Exportdata.headers}
 							className='btn'
+							filename={`google_cal_export_${current}.csv`}
 						>
-							Download Data
+							<FontAwesomeIcon icon={faDownload} />
 						</CSVLink>
+					) : (
+						<></>
+					)}
+					{data.length > 1 ? (
+						<div>
+							{" "}
+							{`${startDate}`.substring(0, 15)}
+							<span> to </span>
+							{`${endDate}`.substring(0, 15)}{" "}
+						</div>
 					) : (
 						<></>
 					)}
@@ -211,7 +230,9 @@ const CalendarComponent = () => {
 							<TailSpin id='spinner' color='#0ECA2D' height={80} width={80} />
 						</div>
 					) : (
-						<ResultTable data={data} colorData={colorData} />
+						<div>
+							<ResultTable data={data} colorData={colorData} />
+						</div>
 					)}
 				</div>
 			) : (

@@ -1,6 +1,6 @@
 import { Table } from "react-bootstrap"
-import Dates from "../Helpers/Dates"
-import Helper from "../Helpers/Helpers"
+import Dates from "../../Helpers/Dates"
+import Helper from "../../Helpers/Helpers"
 
 const ResultTable = (props) => {
 	return (

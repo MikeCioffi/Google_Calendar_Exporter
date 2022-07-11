@@ -9,10 +9,14 @@
     z-index: 2;
     
 }
+.colorButton img{
+    width: 42px; 
+}
 .department-input{
     border: none; 
     /* background-color: darkgrey;  */
     /* border-bottom: 1px solid black; */
+    border-radius: 5px;;
 }
 
 .color-save-button{
